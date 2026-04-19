@@ -1,0 +1,39 @@
+package Resturante;
+
+public class Feedback {
+    private String nome;
+    private String tipoMenu;
+    private String esperienza;
+    private int rating;
+
+    public Feedback(String nome, String tipoMenu, String esperienza, int rating) {
+        this.nome = nome;
+        this.tipoMenu = tipoMenu;
+        this.esperienza = esperienza;
+        this.rating = rating;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getTipoMenu() {
+        return tipoMenu;
+    }
+
+    public String getEsperienza() {
+        return esperienza;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    @Override
+    public String toString() {
+        return "Nome: " + nome +
+               "\nMenu: " + tipoMenu +
+               "\nEsperienza: " + esperienza +
+               "\nRating: " + rating + " ⭐\n----------------------";
+    }
+}

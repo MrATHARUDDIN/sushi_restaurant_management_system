@@ -1,79 +1,91 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Resturante;
 
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 
-/**
- *
- * @author Utente
- */
-public class homeFrame extends JFrame implements ActionListener{
-    private JPanel home;
-    private JLabel img;
-    private JButton login;
-    private JButton signUp;
-    private JButton exploreMenu;
-    
-    
-    public homeFrame(String Titolo){
-        super(Titolo);
-        home = new JPanel();
-        add(home);
-        home.setLayout(null);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setBounds(500, 200, 750, 750);
-        ImageIcon icon = new ImageIcon(getClass().getResource("sushilogo.png"));
-        img  = new JLabel(icon);
-        img.setBounds(100, 100, 450, 200);
-        home.add(img);
-        home.setBackground(Color.white);
-        
-        Color orange = new Color(255, 140, 0);
-        login = new JButton("Login");
-        login.setBounds(220, 400, 120, 40);
-        login.setBackground(orange);
-        login.addActionListener(this);
-        home.add(login);
+public class DettaglioTavolo extends JFrame implements ActionListener {
 
-        signUp = new JButton("SignUp");
-        signUp.setBounds(360, 400, 120, 40);
-        signUp.setBackground(orange);
-        signUp.addActionListener(this);
-        home.add(signUp);
-        
-        exploreMenu = new JButton("Explore Menu");
-        exploreMenu.setBounds(290, 460, 120, 40);
-        exploreMenu.setBackground(orange);
-        exploreMenu.addActionListener(this);
-        home.add(exploreMenu);
-        
+    private JComboBox<Integer> comboPersone;
+    private JRadioButton generale, allYouCanEat;
+    private JButton conferma, annulla;
+
+    private ClasseTavolo tavolo;
+    private JButton bottone;
+
+    public DettaglioTavolo(ClasseTavolo tavolo, JButton bottone) {
+        this.tavolo = tavolo;
+        this.bottone = bottone;
+
+        setTitle("Tavolo " + tavolo.getNumeroTavolo());
+        setSize(350, 250);
+        setLocationRelativeTo(null);
+        setLayout(null);
+
+        JLabel lblPersone = new JLabel("Persone:");
+        lblPersone.setBounds(30, 20, 100, 25);
+        add(lblPersone);
+
+        Integer[] numeri = {1,2,3,4,5,6,7,8};
+        comboPersone = new JComboBox<>(numeri);
+        comboPersone.setBounds(120, 20, 150, 25);
+        add(comboPersone);
+
+        JLabel lblMenu = new JLabel("Tipo di Menu:");
+        lblMenu.setBounds(30, 60, 150, 25);
+        add(lblMenu);
+
+        generale = new JRadioButton("Generale");
+        generale.setBounds(30, 90, 120, 25);
+
+        allYouCanEat = new JRadioButton("All you can eat");
+        allYouCanEat.setBounds(30, 120, 150, 25);
+
+        ButtonGroup gruppo = new ButtonGroup();
+        gruppo.add(generale);
+        gruppo.add(allYouCanEat);
+
+        add(generale);
+        add(allYouCanEat);
+
+        conferma = new JButton("Conferma");
+        conferma.setBounds(40, 160, 120, 30);
+        conferma.setBackground(Color.GREEN);
+        conferma.addActionListener(this);
+
+        annulla = new JButton("annulla");
+        annulla.setBounds(180, 160, 120, 30);
+        annulla.setBackground(Color.RED);
+        annulla.addActionListener(this);
+
+        add(conferma);
+        add(annulla);
 
         setVisible(true);
     }
+
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == login) {
-            new LoginFrame("Login");
+
+        if (e.getSource() == conferma) {
+
+            int persone = (int) comboPersone.getSelectedItem();
+            String menu = generale.isSelected() ? "Generale" : "All you can eat";
+
+            tavolo.setPersone(persone);
+            tavolo.setTipoMenu(menu);
+            tavolo.setOccupato(true);
+
+            bottone.setBackground(Color.RED);
+
+            JOptionPane.showMessageDialog(this,
+                    "Salvato!\nPersone: " + persone + "\nMenu: " + menu);
+            new Prenotazione("Prenota");
             this.dispose();
-        } 
-        else if (e.getSource() == signUp) {
-            new SignUpFrame("Signup");
-            this.dispose();
-        } 
-        else if (e.getSource() == exploreMenu) {
-            new SignUpFrame("Signup");
+        }
+
+        if (e.getSource() == annulla) {
             this.dispose();
         }
     }
-    
 }

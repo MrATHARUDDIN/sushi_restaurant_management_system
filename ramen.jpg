@@ -1,0 +1,91 @@
+package Resturante;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class MostraFeedbackFrame extends JFrame implements ActionListener {
+
+    private JButton annulla;
+
+    public MostraFeedbackFrame() {
+        setTitle("Tutti i Feedback");
+        setSize(450, 600);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+
+        // 🔹 Container for cards
+        JPanel container = new JPanel();
+        container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
+        container.setBackground(Color.WHITE);
+
+        for (Feedback f : FeedbackManager.getFeedbacks()) {
+            container.add(createCard(f));
+            container.add(Box.createRigidArea(new Dimension(0, 10)));
+        }
+
+        JScrollPane scroll = new JScrollPane(container);
+        add(scroll, BorderLayout.CENTER);
+
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setBackground(Color.WHITE);
+
+        annulla = new JButton("Annulla");
+        annulla.setBackground(Color.RED);
+        annulla.setForeground(Color.WHITE);
+        annulla.addActionListener(this);
+
+        bottomPanel.add(annulla);
+
+        add(bottomPanel, BorderLayout.SOUTH);
+
+        setVisible(true);
+    }
+
+    private JPanel createCard(Feedback f) {
+
+        JPanel card = new JPanel();
+        card.setLayout(null);
+        card.setPreferredSize(new Dimension(380, 140));
+        card.setMaximumSize(new Dimension(380, 140));
+        card.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
+
+        if (f.getRating() >= 4) {
+            card.setBackground(new Color(200, 255, 200));
+        } else if (f.getRating() == 3) {
+            card.setBackground(new Color(255, 255, 200));
+        } else {
+            card.setBackground(new Color(255, 200, 200));
+        }
+
+        JLabel nome = new JLabel("👤 " + f.getNome());
+        nome.setBounds(10, 10, 300, 20);
+        card.add(nome);
+
+        JLabel menu = new JLabel("🍽️ " + f.getTipoMenu());
+        menu.setBounds(10, 35, 300, 20);
+        card.add(menu);
+
+        JTextArea esperienza = new JTextArea("💬 " + f.getEsperienza());
+        esperienza.setBounds(10, 60, 350, 40);
+        esperienza.setLineWrap(true);
+        esperienza.setWrapStyleWord(true);
+        esperienza.setEditable(false);
+        esperienza.setBackground(card.getBackground());
+        card.add(esperienza);
+
+        String stars = "⭐".repeat(f.getRating());
+        JLabel rating = new JLabel(stars);
+        rating.setBounds(10, 105, 200, 20);
+        card.add(rating);
+
+        return card;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == annulla) {
+            this.dispose();
+        }
+    }
+}

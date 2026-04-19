@@ -1,83 +1,142 @@
 package Resturante;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
 
-public class UserPage extends JFrame implements ActionListener {
-    private JPanel userpage;
-    private JButton prenotazione, feedback, consegnaDomicilio;
-    private JLabel img;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
 
-    public UserPage() {
-        // --- Frame & Panel Setup ---
-        setTitle("Sushi User Page");
+public class sushiFrame extends JFrame implements ActionListener {
+
+    private JPanel sushi, grid, bottom, itemPanel, buttons;
+    private JLabel background;
+    private JButton orderBtn, backBtn;
+    private ArrayList<JComboBox<String>> quantityBoxes = new ArrayList<>();
+    private ArrayList<Piatto> sushiList;
+
+    public sushiFrame(String titolo) {
+
+        super(titolo);
+
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setBounds(500, 200, 750, 750);
+        setLocationRelativeTo(null);
+        setBounds(450, 50, 750, 750);
 
-        userpage = new JPanel(null);
-        add(userpage);
+        ImageIcon bgIcon = new ImageIcon(getClass().getResource("/Resturante/int.jpg"));
+        background = new JLabel(bgIcon);
+        background.setLayout(new BorderLayout());
 
-        prenotazione      = createButton("Prenotazione", 200);
-        feedback          = createButton("Feedback", 300);
-        consegnaDomicilio = createButton("Consegna a Domicilio", 400);
+        sushi = new JPanel(new BorderLayout());
+        sushi.setOpaque(false);
 
-        userpage.add(prenotazione);
-        userpage.add(feedback);
-        userpage.add(consegnaDomicilio);
+        grid = new JPanel(new GridLayout(3, 3, 10, 10));
+        grid.setOpaque(false);
 
-        ImageIcon icon = new ImageIcon(getClass().getResource("int.jpg"));
-        img = new JLabel(icon);
-        img.setBounds(0, 0, 750, 750);
-        userpage.add(img);
+        sushiList = Menu.getSushi();
 
+        for (Piatto p : sushiList) {
+
+            itemPanel = new JPanel(new BorderLayout());
+            itemPanel.setOpaque(false);
+            itemPanel.setBorder(new EmptyBorder(0, 20, 0, 20));
+
+            JLabel imageLabel = new JLabel();
+
+            String imagePath = "sushi/" + p.getImg();
+            java.net.URL imgURL = getClass().getResource(imagePath);
+
+            ImageIcon icon;
+            if (getClass().getResource("/Resturante/sushi/" + p.getImg()) != null) {
+                icon = new ImageIcon(getClass().getResource("/Resturante/sushi/" + p.getImg()));
+            } else {
+                icon = new ImageIcon();
+                System.out.println("Image not found: " + p.getImg());
+            }
+
+            Image scaled = icon.getImage().getScaledInstance(180, 180, Image.SCALE_SMOOTH);
+            imageLabel.setIcon(new ImageIcon(scaled));
+
+            JLabel nameLabel = new JLabel(p.getNome(), JLabel.CENTER);
+            nameLabel.setFont(new Font("Arial", Font.BOLD, 14));
+            nameLabel.setForeground(Color.WHITE);
+
+            JLabel priceLabel = new JLabel("€ " + p.getPrezzo(), JLabel.CENTER);
+            priceLabel.setForeground(Color.YELLOW);
+
+            JComboBox<String> quantityBox = new JComboBox<>();
+            for (int q = 0; q <= 5; q++) {
+                quantityBox.addItem(String.valueOf(q));
+            }
+
+            bottom = new JPanel(new BorderLayout());
+            bottom.setOpaque(false);
+
+            bottom.add(nameLabel, BorderLayout.NORTH);
+            bottom.add(priceLabel, BorderLayout.CENTER);
+            bottom.add(quantityBox, BorderLayout.SOUTH);
+
+            itemPanel.add(imageLabel, BorderLayout.CENTER);
+            itemPanel.add(bottom, BorderLayout.SOUTH);
+
+            grid.add(itemPanel);
+            quantityBoxes.add(quantityBox);
+        }
+
+        buttons = new JPanel();
+        buttons.setOpaque(false);
+
+        orderBtn = new JButton("Ordina");
+        backBtn = new JButton("Indietro");
+
+        orderBtn.addActionListener(this);
+        backBtn.addActionListener(this);
+
+        buttons.add(backBtn);
+        buttons.add(orderBtn);
+
+        sushi.add(grid, BorderLayout.CENTER);
+        sushi.add(buttons, BorderLayout.SOUTH);
+        background.add(sushi, BorderLayout.CENTER);
+
+        setContentPane(background);
         setVisible(true);
-    }
-
-    private JButton createButton(String text, int y) {
-        RoundedButton btn = new RoundedButton(text, 40);
-        btn.setBounds(215, y, 270, 75);
-        btn.setFont(new Font("Arial", Font.BOLD, 20));
-        btn.setBackground(new Color(243, 156, 18));
-        btn.setForeground(Color.WHITE);
-        btn.addActionListener(this);
-        return btn;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        
-    }
 
-    class RoundedButton extends JButton {
-        private int radius;
-        
-        public RoundedButton(String label, int radius) {
-            super(label);
-            this.radius = radius;
-            setContentAreaFilled(false);
-            setFocusPainted(false);
-            setBorderPainted(false);
-            setOpaque(false);
-            setCursor(new Cursor(Cursor.HAND_CURSOR));
-        }
+        if (e.getSource() == orderBtn) {
+            if (e.getSource() == orderBtn) {
 
-        @Override
-        protected void paintComponent(Graphics g) {
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            
-            Color baseColor = getBackground();
-            if (getModel().isPressed()) {
-                g2.setColor(baseColor.darker().darker());
-            } else if (getModel().isRollover()) {
-                g2.setColor(baseColor.darker());
-            } else {
-                g2.setColor(baseColor);
+                ArrayList<Ordine> ordini = new ArrayList<>();
+
+                for (int i = 0; i < sushiList.size(); i++) {
+
+                    int quantita = Integer.parseInt((String) quantityBoxes.get(i).getSelectedItem());
+
+                    if (quantita > 0) {
+                        Piatto p = sushiList.get(i);
+                        ordini.add(new Ordine(p.getNome(), quantita, p.getPrezzo()));
+                    }
+                }
+
+                new Scontrino(ordini);
             }
-
-            g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
-            super.paintComponent(g2);
-            g2.dispose();
+        }
+        if (e.getSource() == backBtn) {
+            new Categoria("catagoria");
+            this.dispose();
         }
     }
 }

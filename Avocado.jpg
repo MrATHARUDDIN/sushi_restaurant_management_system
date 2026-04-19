@@ -1,0 +1,42 @@
+package Resturante;
+
+import java.awt.*;
+import java.util.ArrayList;
+import javax.swing.*;
+
+public class Scontrino extends JFrame {
+
+    
+    public Scontrino(ArrayList<Ordine> ordini) {
+
+        
+        setTitle("Ordine");
+        setSize(500, 500);
+        setLocationRelativeTo(null);
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        double totale = 0;
+
+        for (Ordine o : ordini) {
+
+            JLabel label = new JLabel(
+                o.getNome() + " x" + o.getQuantita() +
+                " = € " + o.getTotale()
+            );
+
+            panel.add(label);
+            totale += o.getTotale();
+        }
+
+        JLabel totalLabel = new JLabel("Totale: € " + totale);
+        totalLabel.setFont(new Font("Arial", Font.BOLD, 18));
+
+        panel.add(Box.createVerticalStrut(20));
+        panel.add(totalLabel);
+
+        add(new JScrollPane(panel));
+        setVisible(true);
+    }
+}
